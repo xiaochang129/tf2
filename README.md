@@ -24,6 +24,7 @@
     2.2. 使用Keras层和模型来管理变量
        Keras模型和层：variables和trainable_variables属性
        对比如下：
+#%%
        tf.nn.sigmoid(tf.matmul(x, W) + b)
        @tf.function
        def multilayer_perceptron(x, w0, b0, w1, b1, w2, b2 ...):
@@ -48,6 +49,7 @@
           optimizer.apply_gradients(zip(gradients, path1.trainable_variables))
         # 保存参数
         tf.saved_model.save(trunk, output_path)
+#%% md
     2.3. 结合tf.data.Datesets和@tf.function
         tf.data.Datesets：从磁盘中传输训练数据，数据集可迭代（但不是迭代器）。
             @tf.function
