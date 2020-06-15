@@ -26,7 +26,7 @@
        def multilayer_perceptron(x, w0, b0, w1, b1, w2, b2 ...):
           x = dense(x, w0, b0)
        # 各图层调用
-        layers = [tf.keras.layers.Dense(hidden_size, activation=tf.nn.sigmoid) for _ in range(n)]
+        layers = [tf.keras.layers.Dense(hidden_size, activation=tf.nn.sigmoid) for hidden_size in [,,]]
         perceptron = tf.keras.Sequential(layers)
         # layers[3].trainable_variables => returns [w3, b3]
         # perceptron.trainable_variables => returns [w0, b0, ...]
