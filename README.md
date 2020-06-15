@@ -11,51 +11,54 @@
 - keras机制
 
 ##  2. tf2的写法
-###    2.1. 数据处理
+###    2.1 数据处理
 tf.data.Datesets：从磁盘中传输训练数据，数据集可迭代（但不是迭代器）。
-@tf.function
-def train(model, dataset, optimizer):
-  for x, y in dataset:
-    predict=model(x)
-    ...
-Keras.fit()API：
-   model.compile(optimizer=optimizer, loss=loss_fn)
-   model.fit(dataset)
 
-###    2.2. Keras层
+###    2.2 模型层
 ####   2.2.1 标准keras层
 @tf.function
-layers=[tf.keras.layers.Dense(hidden_size, activation=tf.nn.sigmoid) for hidden_size in [,,]]# layers[3].trainable_variables => returns [w3, b3]
+layers=[tf.keras.layers.Dense(size, activation=tf.nn.sigmoid) for size in [..]]# layers[3].trainable_variables => returns [w3, b3]
 perceptron = tf.keras.Sequential(layers)# perceptron.trainable_variables => returns [w0, b0, ...]
-head = tf.keras.Sequential([...])
+head = tf.keras.Sequential([..])
 path = tf.keras.Sequential([perceptron, head])
 ####   2.2.2 自定义模型层
-经典RNN
-class DynamicRNN(tf.keras.Model):
-    def __init__(self, rnn_cell):
-      super(DynamicRNN, self).__init__(self)
-      self.cell = rnn_cell
-    def call(self, input_data):
-      input_data = tf.transpose(input_data, [1, 0, 2])
-      outputs = tf.TensorArray(tf.float32, input_data.shape[0])
-      state = self.cell.zero_state(input_data.shape[1], dtype=tf.float32)
-      for i in tf.range(input_data.shape[0]):
-        output, state = self.cell(input_data[i], state)
-        outputs = outputs.write(i, output)
-      return tf.transpose(outputs.stack(), [1, 0, 2]), state
-
-# 训练模式
+class myDense (layers.Layer):
+    def __init__(self, in_dim, out_dim):
+        super(myDense, self).__init__()
+        self.kernel = self.add_variable('w', [in_dim, out_dim])
+        self.bias = self.add_variable('b', [out_dim])
+    def call(self, inputs, training = None):
+        out = inputs @ self.kernel + self.bias
+        return out
+class Model (keras.Model):
+    def __init__(self):
+        super(Model, self).__init__()
+        self.fc1 = myDense(32*32*3 ,256)
+        self.fc2 = myDense(256, 128)
+    def call(self, inputs, training = None):
+        inputs = tf.reshape(inputs, [-1, 32 * 32 * 3])
+        x = self.fc1(inputs)
+        out = tf.nn.relu(x)
+        x = self.fc2(out)
+        return x
+####   2.3  训练/预测
+####   2.3.1  全量训练
+model.compile(optimizer = tf.keras.optimizers.SGD(lr = 0.1), 
+              loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = False), metrics = ['sparse_categorical_accuracy'])
+model.fit(x_train, y_train,batch_size = 32,epochs = 500,validation_split = 0.2,validation_freq = 20)
+model.predict
+####   2.3.2  batch训练
 for x, y in data:
   with tf.GradientTape() as tape:
-    prediction = path(x)
-    loss = loss_fn_head(prediction, y)
-  gradients = tape.gradient(loss, path.trainable_variables)
-  optimizer.apply_gradients(zip(gradients, path.trainable_variables))
-# 保存参数
-tf.saved_model.save(trunk, output_path)
-
-        
-###    2.5. 使用tf.metrics聚合数据和tf.summary来记录它
+    y_pred = Model(x)
+    loss = loss_cal(y_pred, y)
+  gradients = tape.gradient(loss, Model.trainable_variables)
+  optimizer.apply_gradients(zip(gradients, Model.trainable_variables))
+####  2.4 保存参数
+tf.saved_model.save(Model, output_path)
+###   2.5. tf.metrics聚合数据和tf.summary记录
+#第六步，model.summary()
+model.summary() #打印神经网络结构，统计参数数目
         tf.summary.(scalar|histogram|...)：记录摘要。
             summary_writer = tf.summary.create_file_writer('/tmp/summaries')
             with summary_writer.as_default():
