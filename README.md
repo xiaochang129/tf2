@@ -1,8 +1,8 @@
 ## 1.tf2的几个变化   
-    链接：https://www.jianshu.com/p/599c79c3a537
+链接：https://www.jianshu.com/p/599c79c3a537
 ###    1.1. API清理
-       删除tf.app、tf.flags和tf.logging，tf.contrib，清理主要的 tf.*命名空间
-       支持absl-py，一些API已被2.0版本等效替换，如tf.summary, tf.keras.metrics和tf.keras.optimizers。
+删除tf.app、tf.flags和tf.logging，tf.contrib，清理主要的 tf.*命名空间
+支持absl-py，一些API已被2.0版本等效替换，如tf.summary, tf.keras.metrics和tf.keras.optimizers。
 ###    1.2. Eager execution
        Eager execution模式，马上就执行代码（就像Python通常那样）不再有session.run()。
        所有代码按顺序执行（在tf.function中，带有副作用的代码按写入的顺序执行），不在需要tf.control_dependencies()。
