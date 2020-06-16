@@ -145,6 +145,9 @@
         c = np.hstack((a, b))    #[1 2 3 4 5 6]
     tf.transpose(input_x, perm=[0, 2, 1]): 转置，a[x,y,z]->a[x,z,y]
     tf.concat([tf.ones([1,2,3],tf.ones[4,2,3]],axis=0):   shape=[5,2,3]
+        b = tf.constant([[1, 0, 2, 1]])		# 行组成的列表
+        c = tf.constant([[0, 1, 1, 1]])     # 列组成的列表
+        c_b = tf.transpose(tf.concat([b, c], axis=0))  #[[1 0]，[0 1]，[2 1]，[1 1]]
     tf.stack([a,b],axis=0):  shape相同的a,b 合并，并新增维度。[2,1,2,3]
         a,b=tf.unstack(c,axis=0)
     tf.argmax() 最大值索引
@@ -157,7 +160,10 @@
     tf.where(tf.greater(a, b), a, b)  选择条件语句;类似于c语言 a>b?a:b 但是不完全一样，可以扩展到多维。
     tf.pad(a,[[x,y],[u,v],[s,t]]):在a矩阵的shape[0]前x行后y行，shape[1]的前u后v，shape[2]的前s后t插入0.
     tf.tile(a,[2,3]): 复制，shape[0]复制两次，shape[1]复制3次。
-    
+    tf.slice(input, begin, size, name = None)：是从输入数据input中提取出一块切片
+         切片的开始位置是begin，切片的尺寸size表示输出tensor的数据维度，其中size[i]表示在第i维度上面的元素个数。
+    tf.gather_nd(a, c_b)： 取出a中 c_b位置的变量。
+    tf.split():  训练集、测试集切割。
 ### 模型上下文类  
     tf.data.Dataset.from_tensor_slices((输入特征， 标签))：将输入特征和标签进行匹配，构建数据集。
     tf.GradientTape()
@@ -170,3 +176,36 @@
         tf.nn.max_pool2d                       .LSTM
         tf.nn.sigmoid                          .ReLU
         tf.nn.softmax                          .MaxPool2D
+
+##  GPU 按需分配
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"       # 设置使用哪一块GPU（默认是从0开始）
+
+# 下面就是实现按需分配的代码！
+         gpus = tf.config.experimental.list_physical_devices('GPU')
+         if gpus:
+           try:
+             # Currently, memory growth needs to be the same across GPUs
+             for gpu in gpus:
+               tf.config.experimental.set_memory_growth(gpu, True)
+             logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+             print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+           except RuntimeError as e:
+             # Memory growth must be set before GPUs have been initialized
+             print(e)
+ ##  一个样例
+          # monitor监听器, 连续5个验证准确率不增加，这个事情触发。
+         # early_stopping：当验证集损失值，连续增加小于0时，持续10个epoch，则终止训练。
+         early_stopping = keras.callbacks.EarlyStopping(monitor='val_accuracy',
+                                                        min_delta=0.00001,
+                                                        patience=10, verbose=1)
+         # reduce_lr：当评价指标不在提升时，减少学习率，每次减少10%，当验证损失值，持续3次未减少时，则终止训练。
+         reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='val_accuracy', factor=0.1,
+                                                       patience=10, min_lr=0.000001, verbose=1)
+         # 网络的装配。
+         newnet.compile(optimizer=optimizers.Adam(lr=1e-4), loss=losses.CategoricalCrossentropy(from_logits=True),
+                        metrics=['accuracy'])
+         # 完成标准的train，val, test; 标准的逻辑必须通过db_val挑选模型的参数，就需要提供一个earlystopping技术，
+         newnet.fit(db_train, validation_data=db_val, validation_freq=1, epochs=500,
+                    callbacks=[early_stopping, reduce_lr])   # 1个epoch验证1次。触发了这个事情，提前停止了。
+         newnet.evaluate(db_test)
+
