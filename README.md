@@ -114,12 +114,10 @@
     13. tf.add() tf.subtract() tf.multiply() tf.divide() 加减乘除
     14. tf.pow() tf.square() tf.sqrt() 平方 次方 开方
     15. tf.nn.softmax(tf.constant([1.01, 2.01, -0.66]))
-    16.tf.squeeze() 删除
-        x1 = tf.constant([[5.8, 4.0, 1.2, 0.2]])  # 5.8,4.0,1.2,0.2（0）
-        w1 = tf.constant([[-0.8, -0.34, -1.4],
-                          [0.6, 1.3, 0.25],
-                          [0.5, 1.45, 0.9],
-                          [0.65, 0.7, -1.2]])
+    16.tf.squeeze() 删除维度  tf.expand_dims() 新增维度
+        x = tf.constant([5.8, 4.0, 1.2, 0.2])  # （5）
+        x1 = tf.expand_dims(x,axis=0)          #  (1,5)
+        w1 = tf.constant([[-0.8, -0.34, -1.4],[0.6, 1.3, 0.25],[0.5, 1.45, 0.9],[0.65, 0.7, -1.2]])
         b1 = tf.constant([2.52, -3.1, 5.62])
         y = tf.matmul(x1, w1) + b1     #tf.Tensor([[ 1.0099998   2.008      -0.65999985]], shape=(1, 3), dtype=float32)
         y_dim = tf.squeeze(y)  # tf.Tensor([ 1.0099998   2.008      -0.65999985], shape=(3,), dtype=float32)
@@ -141,7 +139,11 @@
     23. np.mgrid[：：,：：]生成等间隔数值点。生成二维数据，第一维 如果是2：5：1，则从2开始，步长1 。
     24. tf.losses.categorical_crossentropy() 交叉熵损失函数
         loss_ce1 = tf.losses.categorical_crossentropy([1, 0], [0.7, 0.3]) # tf.Tensor(0.35667497, shape=(), dtype=float32)
-    25.常用网络结构
+    25. tf.transpose(input_x, perm=[0, 2, 1]): 转置，a[x,y,z]->a[x,z,y]
+    26. tf.concat([tf.ones([1,2,3],tf.ones[4,2,3]],axis=0):   shape=[5,2,3]
+    27. tf.stack([a,b],axis=0):  shape相同的a,b 合并，并新增维度。[2,1,2,3]
+        a,b=tf.unstack(c,axis=0)
+    30.常用网络结构
         tf.matmul               tf.keras.layers.Dense
         tf.nn.conv2d                           .Conv2D
         tf.nn.relu                             .SimpleRNN
