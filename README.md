@@ -96,7 +96,6 @@
 
 ##   6.常用函数
 ### 定义类
-
     tf.one_hot(labels, depth=3)
     tf.zeros([2, 3])，tf.ones(4)，tf.fill([2, 2], 9)  #[[9 9]，[9 9]]
     tf.random_normal(shape, mean=0.0, stddev=1.0, dtype=tf.float32)，tf.truncated_normal()，tf.random.uniform() 均匀分布
@@ -104,9 +103,13 @@
     tf.Variable(tf.random.normal([2,2], mean=0,stddev=1))
     tf.cast(张量名，dtype=数据类型)：强制tensor转换为该数据类型
     tf.convert_to_tensor(np.arange(0, 8), dtype=tf.int64)
-    np.mgrid[：：,：：]生成等间隔数值点。生成二维数据，第一维 如果是2：5：1，则从2开始，步长1 。
-### 计算类
+    np.mgrid[：：,：：]生成等间隔数值点。生成二维数据，第一维 如果是2：5：1，则从2开始，步长1。
+    tf.broadcast_to()： 成倍增加。
+       a = [[1, 2, 3], [4, 5, 6]]
+       b = [4, 6]
+       tf.broadcast_to(a, b)  #[[1 2 3 1 2 3]，[4 5 6 4 5 6]，[1 2 3 1 2 3]，[4 5 6 4 5 6]]
 
+### 计算类
     tf.multiply（）两个矩阵中对应元素各自相乘
         a, b = tf.constant([4.0,3.0]), tf.constant([8.0,10.])
         c=tf.multiply(a,b)
@@ -128,11 +131,12 @@
     assign_sub() 自减函数
         x = tf.Variable(4)
         x.assign_sub(1) # 4-1=3
-    tf.argmax() 最大值索引
-        test = np.array([[1, 2, 3], [2, 3, 4], [5, 4, 3], [8, 7, 2]])
-        tf.argmax(test, axis=0))
-    tf.greater(a, b) 判断大小,a的值大返回a，b的值大返回b。
-    tf.where(tf.greater(a, b), a, b)  选择条件语句;类似于c语言 a>b?a:b 但是不完全一样，可以扩展到多维。
+    tf.math.top_k(output, maxk).indices： 最大maxk个元素的索引
+             pred = tf.transpose(pred, perm=[1, 0])
+             target_ = tf.broadcast_to(target, pred.shape)
+             correct = tf.equal(pred, target_)
+
+### 拼接类
     np.vstack() 拼接
         a = np.array([1, 2, 3]), b = np.array([4, 5, 6])
         c = np.vstack((a, b))    # [[1 2 3]， [4 5 6]]
@@ -143,6 +147,17 @@
     tf.concat([tf.ones([1,2,3],tf.ones[4,2,3]],axis=0):   shape=[5,2,3]
     tf.stack([a,b],axis=0):  shape相同的a,b 合并，并新增维度。[2,1,2,3]
         a,b=tf.unstack(c,axis=0)
+    tf.argmax() 最大值索引
+        test = np.array([[1, 2, 3], [2, 3, 4], [5, 4, 3], [8, 7, 2]])
+        tf.argmax(test, axis=0))
+    tf.argsort()  排序索引，同样，还有tf.sort()
+        id=tf.argsort(a)
+        no=tf.gather(a,id)
+    tf.greater(a, b) 判断大小,a的值大返回a，b的值大返回b。
+    tf.where(tf.greater(a, b), a, b)  选择条件语句;类似于c语言 a>b?a:b 但是不完全一样，可以扩展到多维。
+    tf.pad(a,[[x,y],[u,v],[s,t]]):在a矩阵的shape[0]前x行后y行，shape[1]的前u后v，shape[2]的前s后t插入0.
+    tf.tile(a,[2,3]): 复制，shape[0]复制两次，shape[1]复制3次。
+    
 ### 模型上下文类  
     tf.data.Dataset.from_tensor_slices((输入特征， 标签))：将输入特征和标签进行匹配，构建数据集。
     tf.GradientTape()
