@@ -1,10 +1,11 @@
-##  1.被替换的tf1和替换的tf2
+目录结构：1.TF1和2的区别，2.开发流程
+##  1.TF1和2的区别
 - tf.app、tf.flags和tf.logging，tf.contrib     #### tf.summary, tf.keras.metrics和tf.keras.optimizers。
 - session.run()                                #### outputs = f(input)  （在tf.function中，带有副作用的代码按写入的顺序执行）
 - tf.Variable                                  #### keras机制
 
-##  2. 流程
-###    2.1 数据处理
+##  2. 开发流程
+ ###    2.1 数据处理
     batch_size = 64
     train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
     train_dataset = train_dataset.shuffle(buffer_size=1024).batch(batch_size)
@@ -62,7 +63,7 @@
     model.build(input_shape=(3, param.batch_size, param.maxlen))
     model.summary()
     optimizer = optim.AdamWarmup(learning_rate=1e-5) #设置优化器
-    albert_init_weights_from_checkpoint(model,model_path, param.num_hidden_layers,pooler=False) #可以没有
+    model.load_weights(checkpoint_save_path) #可以没有，或另写。
 ####   2.3.1  全量训练
     model.compile(optimizer = tf.keras.optimizers.SGD(lr = 0.1), 
                   loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = False), metrics = ['sparse_categorical_accuracy'])
