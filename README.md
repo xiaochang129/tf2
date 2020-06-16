@@ -23,8 +23,8 @@
     head = tf.keras.Sequential([..])
     path = tf.keras.Sequential([perceptron, head])
 ####   2.2.2 自定义模型层
-    build的作用是模型第一次调用时明确初始化变量，有些在init中已明确，则不需要。
-##### 在init中明确了输入输出维度
+    build的作用是不指定输入输出维度来初始化参数。
+##### 在init中指定输入输出维度初始化参数
     class myDense (layers.Layer):
         def __init__(self, in_dim, out_dim):   
             super(myDense, self).__init__()
@@ -44,7 +44,7 @@
             out = tf.nn.relu(x)
             x = self.fc2(out)
             return x
-##### build方法(实际不需要)
+##### build方法(可不指定输入输出维度大小初始化参数)
        class SegPosEmbedding(tf.keras.layers.Layer):
         def __init__(self,**kwargs):
             super(SegPosEmbedding, self).__init__(name=name, **kwargs)
