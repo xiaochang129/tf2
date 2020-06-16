@@ -1,4 +1,8 @@
-1.tf.multiply（）两个矩阵中对应元素各自相乘
+### 1.tf.multiply（）两个矩阵中对应元素各自相乘
+    a, b = tf.constant(4.0), tf.constant(8.0)
+    c=tf.multiply(a,b)
+    print(float(c))  # 12
+    print(c)         # tf.Tensor(12.0, shape=(), dtype=float32)
 2.tf.matmul（）将矩阵a乘以矩阵b，生成a * b。
 3.tf.cast(张量名，dtype=数据类型)：强制tensor转换为该数据类型
 4.tf.reduce_min()：计算张量维度上元素的最小值  tf.reduce_max()，tf.reduce_mean()， tf.reduce_sum()
@@ -32,20 +36,12 @@
 19.tf.greater(a, b) 判断大小,a的值大返回a，b的值大返回b。
 20.tf.where(tf.greater(a, b), a, b)  选择条件语句;类似于c语言 a>b?a:b 但是不完全一样，可以扩展到多维。
 21. np.vstack() 拼接
-    a = np.array([1, 2, 3])
-    b = np.array([4, 5, 6])
+    a = np.array([1, 2, 3]), b = np.array([4, 5, 6])
     c = np.vstack((a, b))    # [[1 2 3]， [4 5 6]]
 22. np.hstack() 水平拼接
-    a = np.array([1, 2, 3])
-    b = np.array([4, 5, 6])
+    a = np.array([1, 2, 3]), b = np.array([4, 5, 6])
     c = np.hstack((a, b))    #[1 2 3 4 5 6]
 23. np.mgrid[：：,：：]生成等间隔数值点。生成二维数据，第一维 如果是2：5：1，则从2开始，步长1 。
 24. tf.losses.categorical_crossentropy() 交叉熵损失函数
+    loss_ce1 = tf.losses.categorical_crossentropy([1, 0], [0.7, 0.3]) # tf.Tensor(0.35667497, shape=(), dtype=float32)
 
-loss_ce1 = tf.losses.categorical_crossentropy([1, 0], [0.7, 0.3])
-loss_ce2 = tf.losses.categorical_crossentropy([1, 0], [0.9, 0.1])
-print("loss_ce1:", loss_ce1)
-print("loss_ce2:", loss_ce2)
-结果：
-loss_ce1: tf.Tensor(0.35667497, shape=(), dtype=float32)
-loss_ce2: tf.Tensor(0.105360545, shape=(), dtype=float32)
