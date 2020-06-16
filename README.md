@@ -95,26 +95,29 @@
     tensorboard --logdir /tmp/summaries
 
 ##   6.常用函数
-    1.tf.multiply（）两个矩阵中对应元素各自相乘
+### 定义类
+
+    tf.one_hot(labels, depth=3)
+    tf.zeros([2, 3])，tf.ones(4)，tf.fill([2, 2], 9)  #[[9 9]，[9 9]]
+    tf.random_normal(shape, mean=0.0, stddev=1.0, dtype=tf.float32)，tf.truncated_normal()，tf.random.uniform() 均匀分布
+    tf.Variable(tf.constant(5, dtype=tf.float32))
+    tf.Variable(tf.random.normal([2,2], mean=0,stddev=1))
+    tf.cast(张量名，dtype=数据类型)：强制tensor转换为该数据类型
+    tf.convert_to_tensor(np.arange(0, 8), dtype=tf.int64)
+    np.mgrid[：：,：：]生成等间隔数值点。生成二维数据，第一维 如果是2：5：1，则从2开始，步长1 。
+### 计算类
+
+    tf.multiply（）两个矩阵中对应元素各自相乘
         a, b = tf.constant([4.0,3.0]), tf.constant([8.0,10.])
         c=tf.multiply(a,b)
         print(c.numpy()))  # [32,30]
         print(c)           # tf.Tensor([32,30], shape=(2,2), dtype=float32)  
-    2.tf.matmul（）将矩阵a乘以矩阵b，生成a * b。
-    3.tf.cast(张量名，dtype=数据类型)：强制tensor转换为该数据类型
-    4.tf.reduce_min()：计算张量维度上元素的最小值  tf.reduce_max()，tf.reduce_mean()， tf.reduce_sum()
-    5.tf.Variable(tf.random.normal([2,2], mean=0,stddev=1))
-    6.tf.data.Dataset.from_tensor_slices((输入特征， 标签))：将输入特征和标签进行匹配，构建数据集。
-    7.tf.GradientTape()
-    8.tf.one_hot(labels, depth=3)
-    9.tf.zeros([2, 3])，tf.ones(4)，tf.fill([2, 2], 9)  #[[9 9]，[9 9]]
-    10.tf.random_normal(shape, mean=0.0, stddev=1.0, dtype=tf.float32)，tf.truncated_normal()，tf.random.uniform() 均匀分布
-    11.tf.Variable(tf.constant(5, dtype=tf.float32))
-    12.tf.convert_to_tensor(np.arange(0, 8), dtype=tf.int64)
-    13. tf.add() tf.subtract() tf.multiply() tf.divide() 加减乘除
-    14. tf.pow() tf.square() tf.sqrt() 平方 次方 开方
-    15. tf.nn.softmax(tf.constant([1.01, 2.01, -0.66]))
-    16.tf.squeeze() 删除维度  tf.expand_dims() 新增维度
+    tf.matmul（）将矩阵a乘以矩阵b，生成a * b。
+    tf.reduce_min()：计算张量维度上元素的最小值  tf.reduce_max()，tf.reduce_mean()， tf.reduce_sum()
+    tf.add() tf.subtract() tf.multiply() tf.divide() 加减乘除
+    tf.pow() tf.square() tf.sqrt() 平方 次方 开方
+    tf.nn.softmax(tf.constant([1.01, 2.01, -0.66]))
+    squeeze() 删除维度  tf.expand_dims() 新增维度
         x = tf.constant([5.8, 4.0, 1.2, 0.2])  # （5）
         x1 = tf.expand_dims(x,axis=0)          #  (1,5)
         w1 = tf.constant([[-0.8, -0.34, -1.4],[0.6, 1.3, 0.25],[0.5, 1.45, 0.9],[0.65, 0.7, -1.2]])
@@ -122,28 +125,30 @@
         y = tf.matmul(x1, w1) + b1     #tf.Tensor([[ 1.0099998   2.008      -0.65999985]], shape=(1, 3), dtype=float32)
         y_dim = tf.squeeze(y)  # tf.Tensor([ 1.0099998   2.008      -0.65999985], shape=(3,), dtype=float32)
         y_pro = tf.nn.softmax(y_dim)  #tf.Tensor([0.2563381  0.69540703 0.04825491], shape=(3,), dtype=float32)
-    17.assign_sub() 自减函数
+    assign_sub() 自减函数
         x = tf.Variable(4)
         x.assign_sub(1) # 4-1=3
-    18.tf.argmax() 最大值索引
+    tf.argmax() 最大值索引
         test = np.array([[1, 2, 3], [2, 3, 4], [5, 4, 3], [8, 7, 2]])
         tf.argmax(test, axis=0))
-    19.tf.greater(a, b) 判断大小,a的值大返回a，b的值大返回b。
-    20.tf.where(tf.greater(a, b), a, b)  选择条件语句;类似于c语言 a>b?a:b 但是不完全一样，可以扩展到多维。
-    21. np.vstack() 拼接
+    tf.greater(a, b) 判断大小,a的值大返回a，b的值大返回b。
+    tf.where(tf.greater(a, b), a, b)  选择条件语句;类似于c语言 a>b?a:b 但是不完全一样，可以扩展到多维。
+    np.vstack() 拼接
         a = np.array([1, 2, 3]), b = np.array([4, 5, 6])
         c = np.vstack((a, b))    # [[1 2 3]， [4 5 6]]
-    22. np.hstack() 水平拼接
+    np.hstack() 水平拼接
         a = np.array([1, 2, 3]), b = np.array([4, 5, 6])
         c = np.hstack((a, b))    #[1 2 3 4 5 6]
-    23. np.mgrid[：：,：：]生成等间隔数值点。生成二维数据，第一维 如果是2：5：1，则从2开始，步长1 。
-    24. tf.losses.categorical_crossentropy() 交叉熵损失函数
-        loss_ce1 = tf.losses.categorical_crossentropy([1, 0], [0.7, 0.3]) # tf.Tensor(0.35667497, shape=(), dtype=float32)
-    25. tf.transpose(input_x, perm=[0, 2, 1]): 转置，a[x,y,z]->a[x,z,y]
-    26. tf.concat([tf.ones([1,2,3],tf.ones[4,2,3]],axis=0):   shape=[5,2,3]
-    27. tf.stack([a,b],axis=0):  shape相同的a,b 合并，并新增维度。[2,1,2,3]
+    tf.transpose(input_x, perm=[0, 2, 1]): 转置，a[x,y,z]->a[x,z,y]
+    tf.concat([tf.ones([1,2,3],tf.ones[4,2,3]],axis=0):   shape=[5,2,3]
+    tf.stack([a,b],axis=0):  shape相同的a,b 合并，并新增维度。[2,1,2,3]
         a,b=tf.unstack(c,axis=0)
-    30.常用网络结构
+### 模型上下文类  
+    tf.data.Dataset.from_tensor_slices((输入特征， 标签))：将输入特征和标签进行匹配，构建数据集。
+    tf.GradientTape()
+    tf.losses.categorical_crossentropy() 交叉熵损失函数
+        loss_ce1 = tf.losses.categorical_crossentropy([1, 0], [0.7, 0.3]) # tf.Tensor(0.35667497, shape=(), dtype=float32)
+    常用网络结构
         tf.matmul               tf.keras.layers.Dense
         tf.nn.conv2d                           .Conv2D
         tf.nn.relu                             .SimpleRNN
