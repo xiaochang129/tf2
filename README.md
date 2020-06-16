@@ -1,7 +1,7 @@
 ##  1.被替换的tf1和替换的tf2
-- tf.app、tf.flags和tf.logging，tf.contrib     - tf.summary, tf.keras.metrics和tf.keras.optimizers。
-- session.run()                                - outputs = f(input)  （在tf.function中，带有副作用的代码按写入的顺序执行）
-- tf.Variable                                  - keras机制
+- tf.app、tf.flags和tf.logging，tf.contrib     #### tf.summary, tf.keras.metrics和tf.keras.optimizers。
+- session.run()                                #### outputs = f(input)  （在tf.function中，带有副作用的代码按写入的顺序执行）
+- tf.Variable                                  #### keras机制
 
 ##  2. 流程
 ###    2.1 数据处理
